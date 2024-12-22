@@ -1,0 +1,29 @@
+﻿@page "/phones/edit/{id}"
+@inject HttpClient http;
+@inject NavigationManager navigation;
+
+<h2>Edit</h2>
+
+<PhonesForm PersonId="@phone.PersonId.ToString()" Phone="@phone" OnValidSubmit="@Save" />
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    Phone phone = new Phone();
+
+
+    protected async override Task OnParametersSetAsync()
+    {
+        phone = await http.GetFromJsonAsync<Phone>($"api/phones/{id}")
+                                                           ?? new Phone();
+    }
+
+    async Task Save()
+    {
+        await http.PutAsJsonAsync($"api/phones/{id}", phone);
+        navigation.NavigateTo($"people/edit/{phone?.PersonId}");
+
+    }
+}

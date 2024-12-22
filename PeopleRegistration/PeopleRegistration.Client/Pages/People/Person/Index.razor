@@ -33,7 +33,7 @@ else
                     <td>@person.Name</td>
                     <td>@person.Email</td>
                     <td><a class="btn btn-primary" href="people/edit/@person.Id ">Update</a> </td>
-                    <td><a class="btn btn-danger" @onclick="@(()=> DeletePerson(person.Id.ToString()))" style="color:white">Delete</a> </td>
+                    <td><a class="btn btn-danger" @onclick="@(()=> Delete(person.Id.ToString()))" style="color:white">Delete</a> </td>
                 </tr>
             }
         </tbody>
@@ -43,6 +43,8 @@ else
 <Confirm @ref="confirm" onCancel="@CancelConfirm" onConfirm="@DeleteConfirm">
     <div>Deseja realmente excluir este item ?</div>
 </Confirm>
+
+
 
 <ExibeErro ErrorMessage="@errorMessage" />
 
@@ -54,10 +56,10 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        await CarregaPersons();
+        await Load();
     }
 
-    public async Task CarregaPersons()
+    public async Task Load()
     {
         try
         {
@@ -86,7 +88,7 @@ else
 
     private string _idPerson = string.Empty;
 
-    void DeletePerson(string id)
+    void Delete(string id)
     {
         _idPerson = id;
         confirm.Show();
@@ -97,7 +99,7 @@ else
         await http.DeleteAsync($"api/people/{_idPerson}");
         _idPerson = string.Empty;
         confirm.Hide();
-        await CarregaPersons();
+        await Load();
     }
 
     void CancelConfirm()
@@ -105,3 +107,5 @@ else
         confirm.Hide();
     }
 }
+
+

@@ -1,0 +1,50 @@
+﻿﻿<EditForm Model="@Phone" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+   
+    <div class="form-group">
+        <label form="city">Country Code: </label>
+        <div>
+            <InputText @bind-Value="@Phone.CountryCode" class="form-control" />
+            <ValidationMessage For="@(()=> Phone.CountryCode)" />
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label form="street">Phone Number: </label>
+        <div>
+            <InputText id="txtName" @bind-Value="@Phone!.PhoneNumber" class="form-control" />
+            <ValidationMessage For="@(()=> Phone.PhoneNumber)" />
+        </div>
+    </div>
+   
+    <div class="form-group">
+        <label form="isVerified">Is Verified: </label>
+        <div class="form-check form-switch">
+            <input class="form-check-input" @bind-value="@Phone.IsVerified" type="checkbox" role="switch">
+        </div>
+    </div>
+    <br />
+    <button type="submit" class="btn btn-success">
+        Save
+    </button> 
+    <button class="btn btn-danger" 
+            @onclick="@(()=> navigation!.NavigateTo($"people/edit/{PersonId}"))">
+        Cancel
+    </button>
+</EditForm>
+@code {
+
+    [Inject]
+    public NavigationManager? navigation { get; set; }
+
+    [Parameter]
+    public Phone? Phone { get; set; }
+    
+    [Parameter]
+    public string? PersonId { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+}

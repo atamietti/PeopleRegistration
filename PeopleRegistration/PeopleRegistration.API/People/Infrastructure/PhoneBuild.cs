@@ -46,5 +46,6 @@ public class PhoneBuild : IEntityTypeConfiguration<Phone>
             .HasDefaultValueSql("GETDATE()")
             .IsRequired();
 
+
     }
 }

@@ -17,6 +17,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBa
 
     public virtual async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>>? filter = null)
     {
+      
         IQueryable<TEntity> query = _peopleRegistrationDB.DbContext.Set<TEntity>();
 
         if (filter != null)

@@ -1,15 +1,28 @@
-﻿namespace PeopleRegistration.Client.Dtos;
+﻿using System.ComponentModel.DataAnnotations;
 
-public class Address 
+namespace PeopleRegistration.Client.Dtos;
+
+public class Address
 {
     public Guid Id { get; set; }
     public Guid PersonId { get; set; }
-    public string Street{ get; set; }
+  
+    [Required()]
+    [MaxLength(100)]
+    public string Street { get; set; }
+   
+    [Required()]
+    [MaxLength(100)] 
     public string City { get; set; }
-    public string Region { get; set; }
+    [Required()]
+    [MaxLength(100)] public string Region { get; set; }
+
+    [Required()]
+    [MaxLength(10)]
     public string PostalCode { get; set; }
+    [Required()]
+    [MaxLength(10)]
     public string Country { get; set; }
-    public bool IsPrimary { get; set; }
 
 
 }

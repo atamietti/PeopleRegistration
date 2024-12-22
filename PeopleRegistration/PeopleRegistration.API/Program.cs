@@ -15,7 +15,11 @@ builder.Services.AddSwaggerGen();
 var config = builder.Configuration.GetSection("Config").Get<PeopoleRegistrationConfiguration>() ?? new();
 builder.Services.UsePersonInject(config);
 builder.Services.UseSharedInject();
-
+builder.Services.AddControllers()
+.AddJsonOptions(options =>
+{
+    options.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles;
+});
 
 builder.Services.AddCors(options =>
 {
