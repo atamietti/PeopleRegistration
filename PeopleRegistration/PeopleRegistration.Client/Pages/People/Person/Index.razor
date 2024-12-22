@@ -1,0 +1,107 @@
+﻿@page "/people"
+@inject HttpClient http;
+
+
+<div>
+    <a class="btn btn-success" href="people/create">New Person</a>
+</div>
+<br />
+
+@if (people == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (people.Count == 0)
+{
+    <p><em>Empty...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in people)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.Email</td>
+                    <td><a class="btn btn-primary" href="people/edit/@person.Id ">Update</a> </td>
+                    <td><a class="btn btn-danger" @onclick="@(()=> DeletePerson(person.Id.ToString()))" style="color:white">Delete</a> </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+<Confirm @ref="confirm" onCancel="@CancelConfirm" onConfirm="@DeleteConfirm">
+    <div>Deseja realmente excluir este item ?</div>
+</Confirm>
+
+<ExibeErro ErrorMessage="@errorMessage" />
+
+@code {
+
+    private string errorMessage = "";
+    List<Person>? people { get; set; }
+    Confirm confirm = new Confirm();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await CarregaPersons();
+    }
+
+    public async Task CarregaPersons()
+    {
+        try
+        {
+            var httpResponse = await http.GetAsync($"api/people");
+
+            var mensagem = httpResponse.RequestMessage;
+            var erro = httpResponse.StatusCode;
+            var alerta = httpResponse.Content;
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+                people = JsonSerializer.Deserialize<List<Person>>(responseString,
+                             new JsonSerializerOptions()
+                                 {
+                                     PropertyNameCaseInsensitive = true
+                                 });
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+
+    private string _idPerson = string.Empty;
+
+    void DeletePerson(string id)
+    {
+        _idPerson = id;
+        confirm.Show();
+    }
+
+    async Task DeleteConfirm()
+    {
+        await http.DeleteAsync($"api/people/{_idPerson}");
+        _idPerson = string.Empty;
+        confirm.Hide();
+        await CarregaPersons();
+    }
+
+    void CancelConfirm()
+    {
+        confirm.Hide();
+    }
+}
