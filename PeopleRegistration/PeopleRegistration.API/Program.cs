@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var config = builder.Configuration.GetSection("Config").Get<PeopoleRegistrationConfiguration>() ?? new();
+var config = builder.Configuration.GetSection("Config").Get<PeopleRegistrationConfiguration>() ?? new();
 builder.Services.UsePersonInject(config);
 builder.Services.UseSharedInject();
 builder.Services.AddControllers()

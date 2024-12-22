@@ -6,8 +6,9 @@ using PeopleRegistration.Client;
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri("https://localhost:7022") });
+
+var config = builder.Configuration.GetSection("Config").Get<PeopleRegistrationConfiguration>() ?? new();
+builder.Services.AddSingleton(config);
+builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(config.PeopleRegistrationApi) });
 builder.Services.AddBlazoredLocalStorage();
-
-
 await builder.Build().RunAsync();

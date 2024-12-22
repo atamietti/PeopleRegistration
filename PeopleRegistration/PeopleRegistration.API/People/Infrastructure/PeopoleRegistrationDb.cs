@@ -6,18 +6,18 @@ namespace PeopleRegistration.Infrastructure;
 
 public class PeopoleRegistrationDb : DbContext, IPeopleRegistrationDb
 {
-    private readonly PeopoleRegistrationConfiguration _configuration;
+    private readonly PeopleRegistrationConfiguration _configuration;
     public DbContext DbContext => this;
 
     public PeopoleRegistrationDb(DbContextOptions<PeopoleRegistrationDb> options,
-        PeopoleRegistrationConfiguration configuration) : base(options)
+        PeopleRegistrationConfiguration configuration) : base(options)
     {
         _configuration = configuration;
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer(_configuration.PeopoleRegistrationDBContext);
+        optionsBuilder.UseSqlServer(_configuration.PeopleRegistrationDBContext);
         base.OnConfiguring(optionsBuilder);
     }
 

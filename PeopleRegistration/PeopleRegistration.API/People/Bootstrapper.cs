@@ -7,7 +7,7 @@ namespace PeopleRegistration;
 
 public static class Bootstrapper
 {
-    public static IServiceCollection UsePersonInject(this IServiceCollection services, PeopoleRegistrationConfiguration config)
+    public static IServiceCollection UsePersonInject(this IServiceCollection services, PeopleRegistrationConfiguration config)
     {
         services.AddSingleton(config);
         services.AddScoped<IPersonService, PersonService>();
