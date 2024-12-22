@@ -2,21 +2,19 @@
 using PeopleRegistration.Shared.Infrastructure;
 using System.Text.Json.Serialization;
 
-namespace PeopleRegistration.Shared
+namespace PeopleRegistration.Shared;
+
+
+public static class Bootstrapper
 {
-
-    public static class Bootstrapper
+    public static IServiceCollection UseSharedInject(this IServiceCollection services)
     {
-        public static IServiceCollection UseSharedInject(this IServiceCollection services)
+        services.AddControllers().AddJsonOptions(options =>
         {
-            services.AddControllers().AddJsonOptions(options =>
-            {
-                options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-            });
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
-            return services;
-        }
+        services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+        return services;
     }
-
 }

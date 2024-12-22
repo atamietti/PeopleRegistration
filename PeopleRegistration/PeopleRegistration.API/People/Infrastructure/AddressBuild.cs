@@ -34,10 +34,6 @@ public class AddressBuild : IEntityTypeConfiguration<Address>
            .HasColumnName("country")
            .HasColumnType("varchar(255)");
 
-        builder.Property(e => e.IsPrimary)
-           .HasColumnName("isPrimary")
-           .HasColumnType("bit");
-
         builder.Property(e => e.Id)
             .HasColumnName("id")
             .HasColumnType("uniqueidentifier")

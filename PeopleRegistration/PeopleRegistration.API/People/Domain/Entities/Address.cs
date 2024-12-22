@@ -10,6 +10,5 @@ public class Address : EntityBase
     public string Region { get; set; }
     public string PostalCode { get; set; }
     public string Country { get; set; }
-    public bool IsPrimary { get; set; }
 
 }

@@ -26,10 +26,6 @@ public class PhoneBuild : IEntityTypeConfiguration<Phone>
             .IsRequired(true)
             .HasMaxLength(5);
 
-        builder.Property(e => e.IsPrimary)
-            .HasColumnName("isPrimary")
-            .HasColumnType("bit");
-
         builder.Property(e => e.IsVerified)
             .HasColumnName("isVerified")
             .HasColumnType("bit");

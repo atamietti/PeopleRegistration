@@ -1,4 +1,7 @@
 ﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+
 <nav class="navbar navbar-expand-lg bg-body-tertiary">
     <div class="container-fluid">
 
@@ -19,7 +22,7 @@
             </ul>
             <form class="d-flex">
                 <div class="form-check form-switch">
-                    <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                    <input class="form-check-input" @onchange="@SwitchTheme" checked="@_isDark" type="checkbox" role="switch" id="flexSwitchCheckChecked">
                     <label class="form-check-label" for="flexSwitchCheckChecked">Light/Dark</label>
                 </div>
             </form>
@@ -34,3 +37,25 @@
     <a href="" class="reload">Reload</a>
     <a class="dismiss">🗙</a>
 </div>
+
+@code {
+    private string _theme;
+    private bool _isDark;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _theme = await localStorage.GetItemAsync<string>("theme");
+        _isDark = _theme == "dark";
+
+        await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
+    }
+    async Task SwitchTheme()
+    {
+        _isDark = !_isDark;
+        _theme = _isDark ? "dark" : "light";
+        await localStorage.SetItemAsStringAsync("theme",_theme);
+
+        await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
+
+    }
+}

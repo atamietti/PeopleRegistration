@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PeopleRegistration.Shared.Domain;
 using PeopleRegistration.Shared.Domain.Interfaces;
-using System.Linq.Expressions;
 
 namespace PeopleRegistration.Shared.Infrastructure;
 
@@ -15,16 +14,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : EntityBa
         _peopleRegistrationDB = peopleRegistrationDB;
     }
 
-    public virtual async Task<List<TEntity>> GetAll(Expression<Func<TEntity, bool>>? filter = null)
-    {
-      
-        IQueryable<TEntity> query = _peopleRegistrationDB.DbContext.Set<TEntity>();
-
-        if (filter != null)
-            query = query.Where(filter);
-
-        return await query.ToListAsync();
-    }
+    public virtual async Task<List<TEntity>> GetAll() => await _peopleRegistrationDB.DbContext.Set<TEntity>().ToListAsync();
 
     public async Task<TEntity> Get(Guid id)
     {
