@@ -1,0 +1,44 @@
+﻿@page "/phones/create/{personId}"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime js;
+
+<h2>Address</h2>
+
+<PhonesForm PersonId="@personId" Phone="@phone" OnValidSubmit="@Save" />
+
+<ShowErrorMessage ErrorMessage="@errorMessage" />
+
+@code {
+
+    [Parameter]
+    public string personId { get; set; }
+    private string errorMessage = "";
+    Phone phone = new Phone();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await Focus("txtName");
+    }
+
+    public async Task Focus(string elementId)
+    {
+        await js.InvokeVoidAsync("focusById", elementId);
+    }
+
+    async Task Save()
+    {
+        try
+        {
+            phone.PersonId = Guid.Parse(personId);
+            var result = await http.PostAsJsonAsync("api/phones", phone);
+            navigation.NavigateTo($"people/edit/{phone?.PersonId}");
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

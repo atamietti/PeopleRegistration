@@ -1,0 +1,63 @@
+﻿﻿<EditForm Model="@Address" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label form="street">Street: </label>
+        <div>
+            <InputText id="txtName" @bind-Value="@Address!.Street" class="form-control" />
+            <ValidationMessage For="@(()=> Address.Street)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label form="city">City: </label>
+        <div>
+            <InputText @bind-Value="@Address.City" class="form-control" />
+            <ValidationMessage For="@(()=> Address.City)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label form="region">Region: </label>
+        <div>
+            <InputText @bind-Value="@Address.Region" class="form-control" />
+            <ValidationMessage For="@(()=> Address.Region)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label form="postalCode">Postal Code: </label>
+        <div>
+            <InputText @bind-Value="@Address.PostalCode" class="form-control" />
+            <ValidationMessage For="@(()=> Address.PostalCode)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label form="country">Country: </label>
+        <div>
+            <InputText @bind-Value="@Address.Country" class="form-control" />
+            <ValidationMessage For="@(()=> Address.Country)" />
+        </div>
+    </div>
+   
+    <br />
+    <button type="submit" class="btn btn-success">
+        Save
+    </button> 
+    <button class="btn btn-danger" 
+            @onclick="@(()=> navigation!.NavigateTo($"people/edit/{PersonId}"))">
+        Cancel
+    </button>
+</EditForm>
+@code {
+
+    [Inject]
+    public NavigationManager? navigation { get; set; }
+
+    [Parameter]
+    public Address? Address { get; set; }
+    
+    [Parameter]
+    public string? PersonId { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+}

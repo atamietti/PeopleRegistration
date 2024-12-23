@@ -1,0 +1,184 @@
+﻿@inject HttpClient http;
+
+﻿<EditForm Model="@Person" OnValidSubmit="@OnValidSubmit">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="form-group">
+        <label form="name">Name: </label>
+        <div>
+            <InputText id="txtName" @bind-Value="@Person!.Name" class="form-control" />
+            <ValidationMessage For="@(()=> Person.Name)" />
+        </div>
+    </div>
+    <div class="form-group">
+        <label form="email">email: </label>
+        <div>
+            <InputText @bind-Value="@Person.Email" class="form-control" />
+            <ValidationMessage For="@(()=> Person.Email)" />
+        </div>
+    </div>
+    <br />
+
+    <button type="submit" class="btn btn-success">
+        Save
+    </button>
+    <button class="btn btn-danger"
+            @onclick="@(()=> navigation!.NavigateTo("people"))">
+        Cancel
+    </button>
+    <br />
+
+
+    @if (Person?.Id != Guid.Empty)
+    {
+        <br />
+        <h3>Adresses</h3>
+        <div>
+            <a class="btn btn-primary" href="addresses/create/@Person.Id">New Address</a>
+        </div>
+    }
+    @if (Person?.Addresses != null && Person.Addresses.Count > 0)
+    {
+        <br />
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Street</th>
+                    <th>City</th>
+                    <th>Region</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var address in Person.Addresses)
+                {
+                    <tr>
+                        <td>@address.Street</td>
+                        <td>@address.City</td>
+                        <td>@address.Region</td>
+                        <td><a class="btn btn-primary" href="addresses/edit/@address.Id ">Update</a> </td>
+                        <td><a class="btn btn-danger" @onclick="@(()=> DeleteAddress(address.Id.ToString()))" style="color:white">Delete</a> </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    <br />
+    @if (Person?.Id != Guid.Empty)
+    {
+        <br />
+        <h3>Phones</h3>
+        <div>
+            <a class="btn btn-primary" href="phones/create/@Person.Id">New Phone</a>
+        </div>
+    }
+    @if (Person?.Phones != null && Person.Phones.Count > 0)
+    {
+        <br />
+
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Country Code</th>
+                    <th>Phone Number</th>
+                    <th>Is Verified</th>
+                    <th>Update</th>
+                    <th>Delete</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var phone in Person.Phones)
+                {
+                    <tr>
+                        <td>@phone.CountryCode</td>
+                        <td>@phone.PhoneNumber</td>
+                        <td>@phone.IsVerified</td>
+                        <td><a class="btn btn-primary" href="phones/edit/@phone.Id ">Update</a> </td>
+                        <td><a class="btn btn-danger" @onclick="@(()=> DeletePhone(phone.Id.ToString()))" style="color:white">Delete</a> </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+
+
+
+
+
+</EditForm>
+
+<Confirm @ref="confirmAddress" onCancel="@CancelAddressConfirm" onConfirm="@DeleteAddressConfirm">
+    <div>Deseja realmente excluir este item ?</div>
+</Confirm>
+
+<Confirm @ref="confirmPhone" onCancel="@CancelPhoneConfirm" onConfirm="@DeletePhoneConfirm">
+    <div>Deseja realmente excluir este item ?</div>
+</Confirm>
+
+
+@code {
+
+    [Inject]
+    public NavigationManager? navigation { get; set; }
+
+    [Parameter]
+    public Person? Person { get; set; }
+
+    [Parameter]
+    public EventCallback OnValidSubmit { get; set; }
+
+
+    private string _idAddress = string.Empty;
+    private string _idPhone = string.Empty;
+
+    Confirm confirmAddress = new Confirm();
+    Confirm confirmPhone = new Confirm();
+
+
+
+    void DeleteAddress(string id)
+    {
+        _idAddress = id;
+        confirmAddress.Show();
+    }
+
+    async Task DeleteAddressConfirm()
+    {
+        await http.DeleteAsync($"api/addresses/{_idAddress}");
+        _idAddress = string.Empty;
+        confirmAddress.Hide();
+        navigation.NavigateTo($"people");
+
+    }
+
+    void CancelAddressConfirm()
+    {
+        confirmAddress.Hide();
+    }
+
+
+    void DeletePhone(string id)
+    {
+        _idPhone = id;
+        confirmPhone.Show();
+    }
+
+    async Task DeletePhoneConfirm()
+    {
+        await http.DeleteAsync($"api/phones/{_idPhone}");
+        _idPhone = string.Empty;
+        confirmPhone.Hide();
+        navigation.NavigateTo($"people");
+
+
+    }
+
+    void CancelPhoneConfirm()
+    {
+        confirmAddress.Hide();
+    }
+}

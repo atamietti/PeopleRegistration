@@ -1,0 +1,131 @@
+﻿@page "/people"
+@inject HttpClient http;
+
+
+<div>
+    <br />
+    <a class="btn btn-success" href="people/create">New Person</a>
+</div>
+<br />
+@if (people != null)
+{
+    <div class="d-flex" role="search">
+        <input class="form-control me-2" type="search" @bind-value="@filterValue" placeholder="Filter" aria-label="Search">
+        <button class="btn btn-outline-success" @onclick="@Filter"> Filter</button>
+    </div>
+}
+@if (people == null)
+{
+    <p><em>Loading...</em></p>
+}
+else if (people.Count == 0)
+{
+    <p><em>Empty...</em></p>
+}
+else
+{
+  
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Update</th>
+                <th>Delete</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var person in people)
+            {
+                <tr>
+                    <td>@person.Name</td>
+                    <td>@person.Email</td>
+                    <td><a class="btn btn-primary" href="people/edit/@person.Id ">Update</a> </td>
+                    <td><a class="btn btn-danger" @onclick="@(()=> Delete(person.Id.ToString()))" style="color:white">Delete</a> </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+
+<Confirm @ref="confirm" onCancel="@CancelConfirm" onConfirm="@DeleteConfirm">
+    <div>Deseja realmente excluir este item ?</div>
+</Confirm>
+
+
+
+<ExibeErro ErrorMessage="@errorMessage" />
+
+@code {
+
+    private string errorMessage = "";
+    private string filterValue = "";
+
+    List<Person>? people { get; set; }
+    Confirm confirm = new Confirm();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await Load();
+    }
+
+    public async Task Load()
+    {
+        try
+        {
+            var httpResponse = await http.GetAsync($"api/people");
+
+            var mensagem = httpResponse.RequestMessage;
+            var erro = httpResponse.StatusCode;
+            var alerta = httpResponse.Content;
+
+            if (httpResponse.IsSuccessStatusCode)
+            {
+                var responseString = await httpResponse.Content.ReadAsStringAsync();
+
+                people = JsonSerializer.Deserialize<List<Person>>(responseString,
+                             new JsonSerializerOptions()
+                                 {
+                                     PropertyNameCaseInsensitive = true
+                                 });
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+    public async Task Filter()
+    {
+        if (!string.IsNullOrWhiteSpace(filterValue))
+            people = people?.Where(f => f.Name.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase)
+                                    || f.Email.Contains(filterValue, StringComparison.CurrentCultureIgnoreCase))?.ToList();
+        else
+            await Load();
+    }
+
+    private string _idPerson = string.Empty;
+
+    void Delete(string id)
+    {
+        _idPerson = id;
+        confirm.Show();
+    }
+
+    async Task DeleteConfirm()
+    {
+        await http.DeleteAsync($"api/people/{_idPerson}");
+        _idPerson = string.Empty;
+        confirm.Hide();
+        await Load();
+    }
+
+    void CancelConfirm()
+    {
+        confirm.Hide();
+    }
+}
+
+

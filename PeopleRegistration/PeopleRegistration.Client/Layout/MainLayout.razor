@@ -1,0 +1,61 @@
+﻿@inherits LayoutComponentBase
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject IJSRuntime jsRuntime
+
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+    <div class="container-fluid">
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                        <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+                    </NavLink>
+                </li>
+
+                <li>
+                    <NavLink class="nav-link" href="people">
+                        <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> People
+                    </NavLink>
+                </li>
+
+            </ul>
+            <form class="d-flex">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" @onchange="@SwitchTheme" checked="@_isDark" type="checkbox" role="switch" id="flexSwitchCheckChecked">
+                    <label class="form-check-label" for="flexSwitchCheckChecked">Light/Dark</label>
+                </div>
+            </form>
+        </div>
+    </div>
+</nav>
+<div class="container">
+    @Body
+</div>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+@code {
+    private string _theme;
+    private bool _isDark;
+
+    protected async override Task OnInitializedAsync()
+    {
+        _theme = await localStorage.GetItemAsync<string>("theme");
+        _isDark = _theme == "dark";
+
+        await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
+    }
+    async Task SwitchTheme()
+    {
+        _isDark = !_isDark;
+        _theme = _isDark ? "dark" : "light";
+        await localStorage.SetItemAsStringAsync("theme",_theme);
+
+        await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
+
+    }
+}

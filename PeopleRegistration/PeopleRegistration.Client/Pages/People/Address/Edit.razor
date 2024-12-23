@@ -1,0 +1,29 @@
+﻿@page "/addresses/edit/{id}"
+@inject HttpClient http;
+@inject NavigationManager navigation;
+
+<h2>Edit</h2>
+
+<AddressForm PersonId="@address.PersonId.ToString()" Address="@address" OnValidSubmit="@Save" />
+
+@code {
+
+    [Parameter]
+    public string id { get; set; }
+
+    Address address = new Address();
+
+
+    protected async override Task OnParametersSetAsync()
+    {
+        address = await http.GetFromJsonAsync<Address>($"api/addresses/{id}")
+                                                           ?? new Address();
+    }
+
+    async Task Save()
+    {
+        await http.PutAsJsonAsync($"api/addresses/{id}", address);
+        navigation.NavigateTo($"people/edit/{address?.PersonId}");
+
+    }
+}

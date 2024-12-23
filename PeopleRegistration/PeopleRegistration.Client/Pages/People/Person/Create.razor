@@ -1,0 +1,40 @@
+﻿@page "/people/create"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime js;
+
+<h2>New</h2>
+
+<PersonForm Person="@person" OnValidSubmit="@Save"/>
+
+<ShowErrorMessage ErrorMessage="@errorMessage" />
+
+@code {
+
+    private string errorMessage = "";
+    Person person = new Person();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await Focus("txtName");
+    }
+
+    public async Task Focus(string elementId)
+    {
+        await js.InvokeVoidAsync("focusById", elementId);
+    }
+
+    async Task Save()
+    {
+        try
+        {
+            var result = await http.PostAsJsonAsync("api/people", person);
+            navigation.NavigateTo("people");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}

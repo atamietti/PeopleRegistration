@@ -1,0 +1,44 @@
+﻿@page "/addresses/create/{personId}"
+@inject HttpClient http
+@inject NavigationManager navigation
+@inject IJSRuntime js;
+
+<h2>Address</h2>
+
+<AddressForm PersonId="@personId" Address="@address" OnValidSubmit="@Save" />
+
+<ShowErrorMessage ErrorMessage="@errorMessage" />
+
+@code {
+
+    [Parameter]
+    public string personId { get; set; }
+    private string errorMessage = "";
+    Address address = new Address();
+
+    protected async override Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+            await Focus("txtName");
+    }
+
+    public async Task Focus(string elementId)
+    {
+        await js.InvokeVoidAsync("focusById", elementId);
+    }
+
+    async Task Save()
+    {
+        try
+        {
+            address.PersonId = Guid.Parse(personId);
+            var result = await http.PostAsJsonAsync("api/addresses", address);
+            navigation.NavigateTo($"people/edit/{address?.PersonId}");
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+    }
+}
