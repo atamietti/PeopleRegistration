@@ -41,6 +41,7 @@ if (app.Environment.IsDevelopment())
 app.UseCors("myPolicy");
 
 app.UseHttpsRedirection();
+
 #region PHONES
 
 app.MapGet("/api/phones", async (IRepository<Phone> request) =>
