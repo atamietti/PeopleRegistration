@@ -1,21 +1,8 @@
-# 1. People Registration API
+# 1. People Registration 
 
 
-The People Registration is Basic API  CRUD Project
+The People Registration is Basic API and Blazor Wasm CRUD Project
 
-## CORS Support
-- Configured to allow cross-origin requests, enabling access from different domains.
-
-```c#
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("myPolicy",
-        builder => builder.WithOrigins("*")  //Configure Origin Here
-                          .AllowAnyHeader()
-                          .AllowAnyMethod());
-});
-
-```
 ## Clean Architecture
 The API is **ready to follow a based** clean architecture pattern, separating concerns into distinct layers:
 - **Domain Layer**: Contains business domain entities.
@@ -24,6 +11,21 @@ The API is **ready to follow a based** clean architecture pattern, separating co
 
 ## Feature Folder
 The project is organized using the feature folder structure, which groups related files by feature rather than by type (or csproj). 
+
+## CORS Support
+- Configured to allow cross-origin requests, enabling access from different domains.
+
+```c#
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("myPolicy",
+        builder => builder.WithOrigins("*")  //Configure Origins Here
+                          .AllowAnyHeader()
+                          .AllowAnyMethod());
+});
+
+```
+
 
 # Getting Started
 
@@ -69,35 +71,9 @@ The project is organized using the feature folder structure, which groups relate
 
 5. Start the application:
    ```bash
-   dotnet run
+
+   dotnet run --project PeopleRegistration.API\PeopleRegistration.API.csproj
+
+   dotnet run --project PeopleRegistration.Client\PeopleRegistration.Client.csproj
+   
    ```
-
-### Testing the API
-You can test the API using Swagger UI by navigating to `https://localhost:<port>/swagger` after running the application.
-
-
-# 2. Blazor Web Application 
-
-The People Registration is Basic Blazor CRUD Project
-
-## Installation and Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/your-repo/blazor-people-management.git
-   cd blazor-people-management
-   ```
-2. Install dependencies:
-   ```bash
-   dotnet restore
-   ```
-3. Run the application:
-   ```bash
-   dotnet run
-   ```
-4. Open the application in your browser at `http://localhost:port`.
-
-
-
----
-
-Thank you for using this Blazor web application!
