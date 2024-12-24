@@ -1,7 +1,6 @@
 ﻿function switchTheme(theme) {
 
     document.body.dataset.bsTheme = theme;
-    return true;
 }
 
 function focusById(elementId) {

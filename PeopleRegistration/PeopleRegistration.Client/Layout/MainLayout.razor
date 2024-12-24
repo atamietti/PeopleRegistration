@@ -18,9 +18,7 @@
                         <span class="bi bi-plus-square-fill-nav-menu" aria-hidden="true"></span> People
                     </NavLink>
                 </li>
-                <li>
-                    <span> @_jsResponse</span>
-                </li>
+
             </ul>
             <form class="d-flex">
                 <div class="form-check form-switch">
@@ -43,20 +41,19 @@
 @code {
     private string _theme;
     private bool _isDark;
-    private bool _jsResponse;
 
     protected async override Task OnInitializedAsync()
     {
         _theme = await localStorage.GetItemAsync<string>("theme");
         _isDark = _theme == "dark";
 
-        _jsResponse = await jsRuntime.InvokeAsync<bool>("switchTheme", _theme);
+        await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
     }
     async Task SwitchTheme()
     {
         _isDark = !_isDark;
         _theme = _isDark ? "dark" : "light";
-        await localStorage.SetItemAsStringAsync("theme", _theme);
+        await localStorage.SetItemAsStringAsync("theme",_theme);
 
         await jsRuntime.InvokeVoidAsync("switchTheme", _theme);
 
